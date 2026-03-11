@@ -1,0 +1,32 @@
+name: Story Video Agent
+on:
+  workflow_dispatch: # ده بيخلي زرار التشغيل يظهر لك يدوي
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg imagemagick
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Script
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: python main.py
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        with:
+          name: final-videos
+          path: output_*.mp4
